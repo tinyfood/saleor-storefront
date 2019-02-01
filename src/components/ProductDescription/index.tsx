@@ -1,19 +1,17 @@
 import * as React from "react";
 
 import { Button, SelectField, TextField } from "..";
-import {
-  ProductPriceInterface,
-  ProductVariantInterface
-} from "../../core/types";
+import { ProductPriceInterface } from "../../core/types";
 import { CartContext } from "../CartProvider/context";
 import { SelectValue } from "../SelectField";
 
+import { ProductDetails_product } from "../../views/Product/types/ProductDetails";
 import AddToCartButton from "./AddToCartButton";
 import "./scss/index.scss";
+import { productToCartLineVariant } from "../CartProvider/uitls";
 
 interface ProductDescriptionProps {
-  productVariants: ProductVariantInterface[];
-  name: string;
+  product: ProductDetails_product;
   children: React.ReactNode;
   addToCart(varinatId: string, quantity?: number): void;
 }
@@ -34,14 +32,15 @@ class ProductDescription extends React.Component<
 > {
   constructor(props) {
     super(props);
+    const { variants } = this.props.product;
     const pickers =
-      this.props.productVariants[0].attributes &&
-      this.props.productVariants[0].attributes[0] &&
-      this.props.productVariants[0].attributes[0].attribute &&
+      variants[0].attributes &&
+      variants[0].attributes[0] &&
+      variants[0].attributes[0].attribute &&
       this.createPickers();
     this.state = {
       ...pickers,
-      price: this.props.productVariants[0].price,
+      price: variants[0].price,
       quantity: 1,
       variant: "",
       variantStock: null
@@ -53,17 +52,19 @@ class ProductDescription extends React.Component<
   }
 
   createPickers = () => {
+    const { variants: productVariants } = this.props.product;
+
     const primaryPicker = {
-      label: this.props.productVariants[0].attributes[0].attribute.name,
+      label: productVariants[0].attributes[0].attribute.name,
       selected: "",
       values: []
     };
 
     let secondaryPicker;
 
-    if (this.props.productVariants[0].attributes.length > 1) {
+    if (productVariants[0].attributes.length > 1) {
       secondaryPicker = {
-        label: this.props.productVariants[0].attributes
+        label: productVariants[0].attributes
           .slice(1)
           .map(attribute => attribute.attribute.name)
           .join(" / "),
@@ -74,7 +75,7 @@ class ProductDescription extends React.Component<
 
     const variants = {};
 
-    this.props.productVariants.map(variant => {
+    productVariants.map(variant => {
       if (!primaryPicker.values.includes(variant.attributes[0].value.value)) {
         primaryPicker.values.push(variant.attributes[0].value.value);
       }
@@ -140,21 +141,21 @@ class ProductDescription extends React.Component<
   };
 
   getVariant = () => {
-    const { productVariants } = this.props;
+    const { variants } = this.props.product;
     const { primaryPicker, secondaryPicker } = this.state;
     let variant;
     if (!secondaryPicker && primaryPicker) {
-      variant = productVariants.find(
+      variant = variants.find(
         variant => variant.name === `${primaryPicker.selected}`
       );
     } else if (secondaryPicker && primaryPicker) {
-      variant = productVariants.find(
+      variant = variants.find(
         variant =>
           variant.name ===
           `${primaryPicker.selected} / ${secondaryPicker.selected}`
       );
     } else {
-      variant = this.props.productVariants[0];
+      variant = variants[0];
     }
     const variantStock = variant.stockQuantity;
     const price = variant.price;
@@ -162,11 +163,18 @@ class ProductDescription extends React.Component<
   };
 
   handleSubmit = () => {
-    this.props.addToCart(this.state.variant, this.state.quantity);
+    // this.props.addToCart(this.state.variant, this.state.quantity);
+    this.props.addToCart(
+      productToCartLineVariant(this.props.product, this.state.variant),
+      this.state.quantity
+    );
   };
 
   render() {
-    const { children, name } = this.props;
+    const {
+      children,
+      product: { name }
+    } = this.props;
     const {
       price,
       primaryPicker,

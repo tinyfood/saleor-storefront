@@ -22,6 +22,9 @@ import {
   authLink,
   invalidTokenLinkWithTokenHandlerComponent
 } from "./core/auth";
+import { ShopContext } from "./components/ShopProvider/context";
+import { maybe } from "./core/utils";
+import { CheckoutContext } from "./checkout/context";
 
 const API_URL = urljoin(process.env.BACKEND_URL || "", "/graphql/");
 
@@ -88,12 +91,30 @@ const startApp = async () => {
                   refreshUser
                 >
                   <CheckoutProvider>
-                    <CartProvider apolloClient={apolloClient}>
-                      <Switch>
-                        <Route path={checkoutBaseUrl} component={CheckoutApp} />
-                        <Route component={App} />
-                      </Switch>
-                    </CartProvider>
+                    <CheckoutContext.Consumer>
+                      {checkout => (
+                        <ShopContext.Consumer>
+                          {({ defaultCountry, geolocalization }) => (
+                            <CartProvider
+                              locale={maybe(
+                                () => geolocalization.country.code,
+                                defaultCountry.code
+                              )}
+                              apolloClient={apolloClient}
+                              checkout={checkout}
+                            >
+                              <Switch>
+                                <Route
+                                  path={checkoutBaseUrl}
+                                  component={CheckoutApp}
+                                />
+                                <Route component={App} />
+                              </Switch>
+                            </CartProvider>
+                          )}
+                        </ShopContext.Consumer>
+                      )}
+                    </CheckoutContext.Consumer>
                   </CheckoutProvider>
                 </UserProviderWithTokenHandler>
               )}

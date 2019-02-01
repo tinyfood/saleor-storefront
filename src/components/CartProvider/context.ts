@@ -1,6 +1,19 @@
 import { createContext } from "react";
 
 import { ApolloError } from "apollo-client";
+import {
+  Checkout_lines,
+  Checkout_lines_totalPrice
+} from "../../checkout/types/Checkout";
+import { Omit } from "../../core/tsUtils";
+
+export interface CartLineI
+  extends Omit<Checkout_lines, "__typename" | "id" | "totalPrice"> {
+  totalPrice?: string | Checkout_lines_totalPrice | null;
+  // quantity?: number;
+}
+
+export type AddCartLineI = Omit<CartLineI, "quantity">;
 
 export interface CartLineInterface {
   variantId: string;
@@ -10,23 +23,23 @@ export interface CartLineInterface {
 
 export interface CartInterface {
   errors: ApolloError[] | null;
-  lines: CartLineInterface[];
+  lines: CartLineI[];
   loading: boolean;
-  add(variantId: string, quantity?: number): void;
-  changeQuantity(variantId: string, quantity: number);
+  add(variant: AddCartLineI, quantity?: number): void;
+  changeQuantity(variant: AddCartLineI, quantity: number);
   clear(): void;
   clearErrors(): void;
   fetch(): void;
   getQuantity(): number;
   getTotal(): { currency: string; amount: number };
-  remove(variantId: string): void;
-  subtract(variantId: string, quantity?: number): void;
+  remove(variant: AddCartLineI): void;
+  subtract(variant: AddCartLineI, quantity?: number): void;
 }
 
 /* tslint:disable:no-empty */
 export const CartContext = createContext<CartInterface>({
-  add: (variantId, quantity = 1) => {},
-  changeQuantity: (variantId, quantity) => {},
+  add: (variant, quantity = 1) => {},
+  changeQuantity: (variant, quantity) => {},
   clear: () => {},
   clearErrors: () => {},
   errors: null,
@@ -35,7 +48,7 @@ export const CartContext = createContext<CartInterface>({
   getTotal: () => ({ currency: "USD", amount: 0 }),
   lines: [],
   loading: false,
-  remove: variantId => {},
-  subtract: (variantId, quantity = 1) => {}
+  remove: variant => {},
+  subtract: (variant, quantity = 1) => {}
 });
 /* tslint:enable:no-empty */

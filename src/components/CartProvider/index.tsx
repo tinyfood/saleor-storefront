@@ -13,17 +13,33 @@ import {
   updateCheckoutLine,
   updateCheckoutLineVariables
 } from "../../checkout/types/updateCheckoutLine";
-import { maybe } from "../../core/utils";
-import { productVariatnsQuery } from "../../views/Product/queries";
+import { maybe, priceToString } from "../../core/utils";
+import {
+  productVariatnsQuery,
+  TypedProductVariantsQuery
+} from "../../views/Product/queries";
 import {
   VariantList,
-  VariantListVariables
+  VariantListVariables,
+  VariantList_productVariants
 } from "../../views/Product/types/VariantList";
-import { CartContext, CartInterface, CartLineInterface } from "./context";
+import {
+  CartContext,
+  CartInterface,
+  CartLineInterface,
+  CartLineI
+} from "./context";
+import { Checkout_lines_variant } from "../../checkout/types/Checkout";
+import { nodeVariantToCartLineVariant } from "./uitls";
 
 export default class CartProvider extends React.Component<
-  { children: any; apolloClient: ApolloClient<any> },
-  CartInterface
+  {
+    children: any;
+    locale: string;
+    apolloClient: ApolloClient<any>;
+    checkout: CheckoutContextInterface;
+  },
+  CartInterface & { synced: boolean }
 > {
   static contextType = CheckoutContext;
   static getQuantity = lines =>
@@ -37,8 +53,6 @@ export default class CartProvider extends React.Component<
     return { amount, currency };
   };
 
-  context: CheckoutContextInterface;
-
   constructor(props) {
     super(props);
 
@@ -50,6 +64,7 @@ export default class CartProvider extends React.Component<
     }
 
     this.state = {
+      synced: false,
       add: this.add,
       changeQuantity: this.changeQuantity,
       clear: this.clear,
@@ -65,13 +80,16 @@ export default class CartProvider extends React.Component<
     };
   }
 
-  getLine = (variantId: string): CartLineInterface =>
-    this.state.lines.find(line => line.variantId === variantId);
+  getLine = (variantId: string): CartLineI =>
+    this.state.lines.find(({ variant: { id } }) => id === variantId);
 
-  changeQuantity = async (variantId, quantity) => {
+  changeQuantity = async (
+    variant: Checkout_lines_variant,
+    quantity: number
+  ) => {
     this.setState({ loading: true });
 
-    const checkoutID = maybe(() => this.context.checkout.id);
+    const checkoutID = maybe(() => this.props.checkout.checkout.id);
     let apiError = false;
 
     if (checkoutID) {
@@ -98,7 +116,7 @@ export default class CartProvider extends React.Component<
           lines: [
             {
               quantity,
-              variantId
+              variantId: variant.id
             }
           ]
         }
@@ -110,15 +128,19 @@ export default class CartProvider extends React.Component<
           loading: false
         });
       } else {
-        this.context.update({ checkout });
+        this.props.checkout.update({ checkout });
       }
     }
 
     if (!apiError) {
-      const newLine = { quantity, variantId };
+      const newLine = {
+        quantity,
+        totalPrice: this.geLineTotalPrice(variant, quantity),
+        variant
+      };
       this.setState(prevState => {
         let lines = prevState.lines.filter(
-          line => line.variantId !== variantId
+          stateLine => stateLine.variant.id !== newLine.variant.id
         );
         if (newLine.quantity > 0) {
           lines = [...lines, newLine];
@@ -128,16 +150,16 @@ export default class CartProvider extends React.Component<
     }
   };
 
-  add = (variantId, quantity = 1) => {
-    const line = this.getLine(variantId);
-    const newQuantity = line ? line.quantity + quantity : quantity;
-    this.changeQuantity(variantId, newQuantity);
+  add = (variant: Checkout_lines_variant, quantity = 1) => {
+    const cartLine = this.getLine(variant.id);
+    const newQuantity = cartLine ? cartLine.quantity + quantity : quantity;
+    this.changeQuantity(variant, newQuantity);
   };
 
-  subtract = (variantId, quantity = 1) => {
-    const line = this.getLine(variantId);
+  subtract = (variant: Checkout_lines_variant, quantity = 1) => {
+    const line = this.getLine(variant.id);
     const newQuantity = line ? line.quantity - quantity : quantity;
-    this.changeQuantity(variantId, newQuantity);
+    this.changeQuantity(variant, newQuantity);
   };
 
   clear = () => this.setState({ lines: [], errors: [] });
@@ -173,7 +195,13 @@ export default class CartProvider extends React.Component<
         : [];
 
       this.setState({
-        errors: errors ? [new ApolloError({ graphQLErrors: errors })] : null,
+        errors: errors
+          ? [
+              new ApolloError({
+                graphQLErrors: errors
+              })
+            ]
+          : null,
         lines: errors ? [] : lines,
         loading: false
       });
@@ -184,6 +212,19 @@ export default class CartProvider extends React.Component<
 
   getTotal = () => CartProvider.getTotal(this.state.lines);
 
+  geLineTotalPrice = (
+    variant: Checkout_lines_variant,
+    quantity: number
+  ): string => {
+    return priceToString(
+      {
+        amount: quantity * variant.price.amount,
+        currency: variant.price.currency
+      },
+      this.props.locale
+    );
+  };
+
   remove = variantId => this.changeQuantity(variantId, 0);
 
   componentDidUpdate(prevProps, prevState) {
@@ -191,11 +232,58 @@ export default class CartProvider extends React.Component<
       localStorage.setItem("cart", JSON.stringify(this.state.lines));
     }
   }
+
+  extractVariantsAfterSync = ({ productVariants }: VariantList): void =>
+    this.setState(prevState => {
+      const lines = prevState.lines
+        .map(({ quantity, variant: { id } }) => {
+          const { node } = productVariants.edges.find(
+            ({ node }) => node.id === id
+          );
+          const variant = nodeVariantToCartLineVariant(node);
+          if (!variant) {
+            return;
+          }
+          return {
+            quantity,
+            totalPrice: this.geLineTotalPrice(variant, quantity),
+            variant
+          };
+        })
+        .filter(line => line);
+      return { lines, synced: true };
+    });
+
+  getContext = () => ({
+    ...this.state,
+    add: this.add,
+    changeQuantity: this.changeQuantity,
+    clearErrors: this.clearErrors,
+    remove: this.remove,
+    subtract: this.subtract
+  });
   render() {
-    return (
-      <CartContext.Provider value={this.state}>
+    console.log(this.props);
+    const provider = (
+      <CartContext.Provider value={this.getContext()}>
         {this.props.children}
       </CartContext.Provider>
     );
+
+    if (!this.props.checkout.checkout && !this.state.synced) {
+      return (
+        <TypedProductVariantsQuery
+          displayLoader={false}
+          variables={{
+            ids: this.state.lines.map(line => line.variant.id)
+          }}
+          onCompleted={this.extractVariantsAfterSync}
+        >
+          {() => provider}
+        </TypedProductVariantsQuery>
+      );
+    }
+
+    return provider;
   }
 }

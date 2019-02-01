@@ -89,8 +89,7 @@ class Page extends React.PureComponent<{ product: ProductDetails_product }> {
                       <CartContext.Consumer>
                         {cart => (
                           <ProductDescription
-                            name={product.name}
-                            productVariants={product.variants}
+                            product={product}
                             addToCart={cart.add}
                           >
                             <div
@@ -129,8 +128,7 @@ class Page extends React.PureComponent<{ product: ProductDetails_product }> {
                         <CartContext.Consumer>
                           {cart => (
                             <ProductDescription
-                              name={product.name}
-                              productVariants={product.variants}
+                              product={product}
                               addToCart={cart.add}
                             >
                               <div

@@ -117,7 +117,6 @@ class Page extends React.Component<PageProps> {
       () => geolocalization.country.code,
       defaultCountry.code
     );
-
     return (
       <>
         {checkout ? (
@@ -127,19 +126,7 @@ class Page extends React.Component<PageProps> {
             lines={this.extractCheckoutLines()}
           />
         ) : (
-          <TypedProductVariantsQuery
-            variables={{ ids: lines.map(line => line.variantId) }}
-          >
-            {({ data }) => {
-              return (
-                <ProductsTable
-                  {...productTableProps}
-                  lines={this.extractCartLines(data)}
-                  subtotal={getTotal(data, lines, locale)}
-                />
-              );
-            }}
-          </TypedProductVariantsQuery>
+          <ProductsTable {...productTableProps} lines={lines} subtotal={"0"} />
         )}
 
         <div className="cart-page__checkout-action">

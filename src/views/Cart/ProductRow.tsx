@@ -38,7 +38,8 @@ const ProductRow: React.FC<{
   subtract,
   line
 }) => {
-  const productUrl = generateProductUrl(line.product.id, line.product.name);
+  const { product } = line.variant;
+  const productUrl = generateProductUrl(product.id, product.name);
 
   return (
     <tr
@@ -50,16 +51,16 @@ const ProductRow: React.FC<{
         <div>
           {mediumScreen && (
             <Link to={productUrl}>
-              <CachedThumbnail source={line.product} />
+              <CachedThumbnail source={product} />
             </Link>
           )}
           <Link to={productUrl}>
-            {line.product.name}
+            {product.name}
             {line.name && ` (${line.name})`}
           </Link>
         </div>
       </td>
-      {mediumScreen && <td>{line.price.localized}</td>}
+      {mediumScreen && <td>{line.variant.price.localized}</td>}
       <td className="cart-page__table__quantity-cell">
         {mediumScreen ? (
           <div>

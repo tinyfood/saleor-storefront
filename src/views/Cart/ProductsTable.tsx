@@ -38,12 +38,12 @@ const ProductsTable: React.SFC<{
           </thead>
           <tbody>
             {lines
-              .sort((a, b) =>
-                b.id.toLowerCase().localeCompare(a.id.toLowerCase())
-              )
+              // .sort((a, b) =>
+              //   b.id.toLowerCase().localeCompare(a.id.toLowerCase())
+              // )
               .map(line => (
                 <ProductRow
-                  key={line.id}
+                  key={line.variant.id}
                   line={line}
                   add={add}
                   changeQuantity={changeQuantity}
