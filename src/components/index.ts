@@ -61,4 +61,3 @@ export {
   OverlayType,
   ShowOverlayType
 } from "./Overlay";
-export { default as Select } from "./Select";
