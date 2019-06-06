@@ -14,6 +14,38 @@
     position: relative;
   }
 
+  &__button {
+    box-shadow: none;
+    background-color: $blue;
+    font-size: 16px;
+    padding: 0 3rem;
+    transition: all 0.3s ease;
+
+    &:hover, &:focus {
+      background-color: $turquoise;
+      box-shadow: 0 0 0 1px $turquoise !important;
+    }
+  }
+
+  &__content-with-button {
+    display: flex;
+    position: relative;
+
+    &:hover {
+      & .input__field {
+        box-shadow: 0 0 0 1px $blue;
+      }
+
+      & .input__label {
+        color: $blue;
+      }
+
+      & .input__button {
+        box-shadow: 0 0 0 1px $blue;
+      }
+    }
+  }
+
   &__field {
     display: block;
     width: 100%;
@@ -22,15 +54,21 @@
     color: $base-font-color;
     border: 1px solid $blue;
     outline: none;
-    box-shadow: 0 0 0 1px $white;
     background-color: transparent;
+    transition: all 0.3s ease;
+    z-index: 1;
 
     &:focus,
     &:not([value=""]) {
       box-shadow: 0 0 0 1px $blue;
+
       & + .input__label {
         background-color: $white;
         @include focusedLabel();
+      }
+
+      & ~ .input__button {
+        box-shadow: 0 0 0 1px $blue;
       }
     }
 
@@ -68,7 +106,6 @@
     &:hover {
       box-shadow: 0 0 0 1px $blue;
       color: $blue;
-      transition: all 0.3s ease;
       & + .input__label {
         color: $blue;
       }
