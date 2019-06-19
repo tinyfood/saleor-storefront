@@ -921,7 +921,7 @@ exports[`Storyshots @components/atoms/Input error 1`] = `
   position: absolute;
   left: 0.5rem;
   padding: 0 0.5rem;
-  background-color: #fff;
+  background-color: transparent;
   font-size: 0.875rem;
   top: 0;
   -webkit-transform: translateY(-50%);
@@ -1029,7 +1029,7 @@ exports[`Storyshots @components/atoms/Input with value 1`] = `
   position: absolute;
   left: 0.5rem;
   padding: 0 0.5rem;
-  background-color: #fff;
+  background-color: transparent;
   font-size: 0.875rem;
   top: 0;
   -webkit-transform: translateY(-50%);
