@@ -11,8 +11,8 @@ export const grayDark = "#323232";
 export const grayLight = "#f1f5f5";
 export const green = "#3ed256";
 export const rose = "#c22d74";
-export const turquoise = "#3ee7cd";
-export const turquoiseDark = "#42beab";
+export const turquoise = "#13bebb";
+export const turquoiseDark = "#06a09e";
 export const white = "#fff";
 
 // theme colors
