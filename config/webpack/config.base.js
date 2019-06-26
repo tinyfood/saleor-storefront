@@ -104,7 +104,7 @@ module.exports = ({ sourceDir, distDir }) => ({
         theme_color: "#333"
       }
     }),
-    new webpack.EnvironmentPlugin({ BACKEND_URL: "http://localhost:8000/" })
+    new webpack.EnvironmentPlugin(["npm_package_version", "BACKEND_URL"])
   ],
   node: {
     fs: "empty",
