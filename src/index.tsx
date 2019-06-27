@@ -23,7 +23,7 @@ import { CheckoutContext } from "./checkout/context";
 import CheckoutProvider from "./checkout/provider";
 import { baseUrl as checkoutBaseUrl } from "./checkout/routes";
 import { history } from "./history";
-import { loadCatalogs } from "./translations";
+// import { loadCatalogs } from "./translations";
 
 import {
   NotificationTemplate,
@@ -79,7 +79,25 @@ const startApp = async () => {
     timeout: 2500,
   };
 
-  const catalogs = await loadCatalogs();
+  // const catalogs = {} // await loadCatalogs();
+
+  const fallbackLang = "en";
+
+  const getLangCode = (code: string) =>
+    code.includes("-") ? code.split("-")[0] : code;
+  const lang = getLangCode(
+    (
+      (navigator.languages && navigator.languages[0]) ||
+      navigator.language ||
+      fallbackLang
+    ).toLowerCase()
+  );
+  // tslint:disable-next-line:no-console
+  console.log("lang", lang);
+  export const loadCatalogs = (language: string = lang) =>
+    import(`@lingui/loader!./locales/${language}/messages.po`);
+  
+  const catalogs = loadCatalogs(lang) || {};
 
   const Root = hot(module)(() => {
     const alert = useAlert();
@@ -87,7 +105,7 @@ const startApp = async () => {
     return (
       <Router history={history}>
         <ApolloProvider client={apolloClient}>
-          <I18nProvider catalogs={catalogs}>
+          <I18nProvider language={lang} catalogs={catalogs}>
             <ShopProvider>
               <OverlayProvider>
                 <UserProviderWithTokenHandler
