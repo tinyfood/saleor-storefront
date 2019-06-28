@@ -11,7 +11,9 @@ All notable, unreleased changes to this project will be documented in this file.
 - Add rich-text content renderer - #361 by @AlicjaSzu
 - Add TextField and ErrorMessage components - #373 by @AlicjaSzu
 - Add CreditCardForm components - #369 by @AlicjaSzu
-- Add lingui - #382 by @AlicjaSzu
+- Display filters when no product was found - #319 by @aldomonteiro
+- Add ServiceWorker provider - #352 by @bogdal
+- Add Lingui - #382 by @AlicjaSzu
 
 ## 0.6.0
 

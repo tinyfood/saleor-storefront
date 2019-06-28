@@ -105,15 +105,7 @@ module.exports = ({ sourceDir, distDir }) => ({
         theme_color: "#333"
       }
     }),
-    new webpack.EnvironmentPlugin(["npm_package_version", "BACKEND_URL"]),
-    new webpack.ContextReplacementPlugin(
-      /babel-plugin-macros[\/\\]dist/,
-      path.resolve(__dirname, "./src/locales")
-    ),
-    new webpack.ContextReplacementPlugin(
-      /import-fresh/,
-      path.resolve(__dirname, "./src/locales")
-    )
+    new webpack.EnvironmentPlugin(["npm_package_version", "BACKEND_URL", "SERVICE_WORKER_TIMEOUT"])
   ],
   node: {
     fs: "empty",

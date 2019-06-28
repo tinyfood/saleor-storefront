@@ -2,6 +2,11 @@ import { I18nProvider } from "@lingui/react";
 import { hot } from "react-hot-loader";
 import { ThemeProvider } from "styled-components";
 
+import {
+  NotificationTemplate,
+  ServiceWorkerContext,
+  ServiceWorkerProvider
+} from "@components/atoms";
 import { defaultTheme, GlobalStyle } from "@styles";
 
 import { defaultDataIdFromObject, InMemoryCache } from "apollo-cache-inmemory";
@@ -15,18 +20,17 @@ import { positions, Provider as AlertProvider, useAlert } from "react-alert";
 import { ApolloProvider } from "react-apollo";
 import { render } from "react-dom";
 import { Route, Router, Switch } from "react-router-dom";
-import urljoin from "url-join";
 
 import { App } from "./app";
 import CheckoutApp from "./checkout";
 import { CheckoutContext } from "./checkout/context";
 import CheckoutProvider from "./checkout/provider";
 import { baseUrl as checkoutBaseUrl } from "./checkout/routes";
+import { apiUrl, serviceWorkerTimeout } from './constants';
 import { history } from "./history";
 import { lang, loadCatalogs } from "./translations";
 
 import {
-  NotificationTemplate,
   OverlayProvider,
   UserProvider
 } from "./components";
@@ -40,8 +44,6 @@ import {
   invalidTokenLinkWithTokenHandlerComponent
 } from "./core/auth";
 
-const API_URL = urljoin(process.env.BACKEND_URL || "/", "/graphql/");
-
 const {
   component: UserProviderWithTokenHandler,
   link: invalidTokenLink,
@@ -51,7 +53,7 @@ const link = ApolloLink.from([
   invalidTokenLink,
   authLink,
   new RetryLink(),
-  new BatchHttpLink({ uri: API_URL }),
+  new BatchHttpLink({ uri: apiUrl }),
 ]);
 
 const cache = new InMemoryCache({
@@ -84,72 +86,93 @@ const startApp = async () => {
   const Root = hot(module)(() => {
     const alert = useAlert();
 
+    const { updateAvailable } = React.useContext(ServiceWorkerContext);
+
+    React.useEffect(() => {
+      if (updateAvailable) {
+        alert.show(
+          {
+            actionText: "Refresh",
+            content: "To update the application to the latest version, please refresh the page!",
+            title: "New version is available!",
+          },
+          {
+            onClose: () => {
+              location.reload();
+            },
+            timeout: 0,
+            type: "success",
+          }
+        );
+      }
+    }, [updateAvailable]);
+
     return (
       <Router history={history}>
         <ApolloProvider client={apolloClient}>
-          <I18nProvider language={lang} catalogs={catalogs}>
-            <ShopProvider>
-              <OverlayProvider>
-                <UserProviderWithTokenHandler
-                  apolloClient={apolloClient}
-                  onUserLogin={() =>
-                    alert.show(
-                      {
-                        title: "You are now logged in",
-                      },
-                      { type: "success" }
-                    )
-                  }
-                  onUserLogout={() =>
-                    alert.show(
-                      {
-                        title: "You are now logged out",
-                      },
-                      { type: "success" }
-                    )
-                  }
-                  refreshUser
-                >
-                  <UserContext.Consumer>
-                    {user => (
-                      <CheckoutProvider user={user}>
-                        <CheckoutContext.Consumer>
-                          {checkout => (
-                            <CartProvider
-                              checkout={checkout}
-                              apolloClient={apolloClient}
-                            >
-                              <ThemeProvider theme={defaultTheme}>
-                                <>
-                                  <Switch>
-                                    <Route
-                                      path={checkoutBaseUrl}
-                                      component={CheckoutApp}
-                                    />
-                                    <Route component={App} />
-                                  </Switch>
-                                  <GlobalStyle />
-                                </>
-                              </ThemeProvider>
-                            </CartProvider>
-                          )}
-                        </CheckoutContext.Consumer>
-                      </CheckoutProvider>
-                    )}
-                  </UserContext.Consumer>
-                </UserProviderWithTokenHandler>
-              </OverlayProvider>
-            </ShopProvider>
-          </I18nProvider>
+          <ShopProvider>
+            <OverlayProvider>
+              <UserProviderWithTokenHandler
+                apolloClient={apolloClient}
+                onUserLogin={() =>
+                  alert.show(
+                    {
+                      title: "You are now logged in",
+                    },
+                    { type: "success" }
+                  )
+                }
+                onUserLogout={() =>
+                  alert.show(
+                    {
+                      title: "You are now logged out",
+                    },
+                    { type: "success" }
+                  )
+                }
+                refreshUser
+              >
+                <UserContext.Consumer>
+                  {user => (
+                    <CheckoutProvider user={user}>
+                      <CheckoutContext.Consumer>
+                        {checkout => (
+                          <CartProvider
+                            checkout={checkout}
+                            apolloClient={apolloClient}
+                          >
+                            <Switch>
+                              <Route
+                                path={checkoutBaseUrl}
+                                component={CheckoutApp}
+                              />
+                              <Route component={App} />
+                            </Switch>
+                          </CartProvider>
+                        )}
+                      </CheckoutContext.Consumer>
+                    </CheckoutProvider>
+                  )}
+                </UserContext.Consumer>
+              </UserProviderWithTokenHandler>
+            </OverlayProvider>
+          </ShopProvider>
         </ApolloProvider>
       </Router>
     );
   });
 
   render(
-    <AlertProvider template={NotificationTemplate} {...notificationOptions}>
-      <Root />
-    </AlertProvider>,
+    <ThemeProvider theme={defaultTheme}>
+      <I18nProvider language={lang} catalogs={catalogs}>
+        <AlertProvider template={NotificationTemplate} {...notificationOptions}>
+          <ServiceWorkerProvider timeout={serviceWorkerTimeout}>
+            <GlobalStyle />
+            <Root />
+          </ServiceWorkerProvider>
+        </AlertProvider>
+      </I18nProvider>
+    </ThemeProvider>,
     document.getElementById("root")
   );
 
@@ -158,30 +181,5 @@ const startApp = async () => {
     module.hot.accept();
   }
 };
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/service-worker.js")
-      .then(registration => {
-        window.setInterval(
-          () => navigator.onLine && registration.update(),
-          60 * 1000
-        );
-        registration.onupdatefound = () => {
-          const installingWorker = registration.installing;
-          installingWorker.onstatechange = () => {
-            if (
-              installingWorker.state === "installed" &&
-              navigator.serviceWorker.controller
-            ) {
-              // tslint:disable-next-line: no-console
-              console.log("New version is available!. Refresh the page!");
-            }
-          };
-        };
-      });
-  });
-}
 
 startApp();

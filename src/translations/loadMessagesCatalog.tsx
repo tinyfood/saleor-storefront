@@ -16,6 +16,6 @@ export const loadCatalogs = async (language: string = lang) => {
      /* webpackMode: "lazy", webpackChunkName: "i18n-[index]" */
      `../locales/${language}/messages.js`)
   return {
-    [language]: catalog
+    [language]: catalog,
   }
 }
