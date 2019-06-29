@@ -4,7 +4,6 @@ const CleanWebpackPlugin = require("clean-webpack-plugin");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const webpack = require("webpack");
-const path = require("path");
 
 module.exports = ({ sourceDir, distDir }) => ({
   resolve: {
@@ -105,7 +104,7 @@ module.exports = ({ sourceDir, distDir }) => ({
         theme_color: "#333"
       }
     }),
-    new webpack.EnvironmentPlugin(["npm_package_version", "BACKEND_URL", "SERVICE_WORKER_TIMEOUT"])
+    new webpack.EnvironmentPlugin({ BACKEND_URL: "http://localhost:8000" })
   ],
   node: {
     fs: "empty",
