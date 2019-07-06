@@ -15,7 +15,7 @@ A GraphQL-powered, PWA, single-page application storefront for [Saleor](https://
 ## Demo
 
 See the [public demo](http://pwa.getsaleor.com) of Saleor Storefront!
-https://github.com/kolide/heroku-buildpack-github-graphql.git
+
 Or launch the demo on a free Heroku instance. Note that you have to set the `BACKEND_URL` environment to point to the Saleor instance.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
