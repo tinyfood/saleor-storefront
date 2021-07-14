@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -25,6 +26,7 @@ export interface GetProducts_products_edges_node {
    */
   id: string;
   name: string;
+  slug: string;
 }
 
 export interface GetProducts_products_edges {
@@ -54,4 +56,5 @@ export interface GetProducts {
 export interface GetProductsVariables {
   cursor?: string | null;
   perPage?: number | null;
+  channel?: string | null;
 }

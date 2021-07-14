@@ -1,42 +1,35 @@
-import "./scss/index.scss";
-
-import React, { useContext, useState } from "react";
-import { Redirect } from "react-router";
-
 import { useAuth } from "@saleor/sdk";
+import { NextPage } from "next";
+import React, { useContext } from "react";
 
-import { Offline, OfflinePlaceholder, Online, OverlayContext } from "..";
+import { OfflinePlaceholder, Redirect } from "@components/atoms";
+import { paths } from "@paths";
 
+import { Offline, Online, OverlayContext } from "..";
+import { OverlayTheme, OverlayType } from "../Overlay";
 import CheckoutAsGuest from "./CheckoutAsGuest";
-import ResetPasswordForm from "./ResetPasswordForm";
 import SignInForm from "./SignInForm";
 
-const CheckoutLogin: React.FC<{}> = () => {
-  const [resetPassword, setResetPassword] = useState(false);
+import "./scss/index.scss";
+
+const CheckoutLogin: NextPage = () => {
   const overlay = useContext(OverlayContext);
   const { user } = useAuth();
-  if (user) {
-    return <Redirect to="/checkout/" />;
-  }
-  return (
+  const { show } = overlay;
+
+  const showPasswordResetOverlay = () => {
+    show(OverlayType.password, OverlayTheme.right);
+  };
+
+  return user ? (
+    <Redirect url={paths.checkout} />
+  ) : (
     <div className="container">
       <Online>
         <div className="checkout-login">
           <CheckoutAsGuest overlay={overlay} checkoutUrl="/checkout/" />
           <div className="checkout-login__user">
-            {resetPassword ? (
-              <ResetPasswordForm
-                onClick={() => {
-                  setResetPassword(false);
-                }}
-              />
-            ) : (
-              <SignInForm
-                onClick={() => {
-                  setResetPassword(true);
-                }}
-              />
-            )}
+            <SignInForm onForgottenPasswordClick={showPasswordResetOverlay} />
           </div>
         </div>
       </Online>

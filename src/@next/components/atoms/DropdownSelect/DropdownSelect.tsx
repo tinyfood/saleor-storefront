@@ -3,11 +3,10 @@ import { FormattedMessage } from "react-intl";
 import { components } from "react-select";
 import { ThemeContext } from "styled-components";
 
-import { Label } from "../Label";
-import { Select } from "../Select";
-
 import { useHandlerWhenClickedOutside } from "../../../hooks";
 import { Icon } from "../Icon";
+import { Label } from "../Label";
+import { Select } from "../Select";
 import * as S from "./styles";
 import { IProps } from "./types";
 
@@ -28,7 +27,7 @@ export const DropdownSelect: React.FC<IProps> = ({
         <Label>
           <FormattedMessage defaultMessage="Sort by:" />{" "}
         </Label>
-        <S.Value>{` ${value ? value.label : ""}`}</S.Value>
+        <S.Value>{value?.label || ""}</S.Value>
         <S.Indicator rotate={String(menuIsOpen)}>
           <Icon name="select_arrow" size={10} />
         </S.Indicator>

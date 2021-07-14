@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import { CountryCode } from "./../../../../gqlTypes/globalTypes";
@@ -11,14 +12,17 @@ import { CountryCode } from "./../../../../gqlTypes/globalTypes";
 export interface VariantList_productVariants_edges_node_images {
   __typename: "ProductImage";
   /**
-   * The ID of the object.
+   * The ID of the image.
    */
   id: string;
   /**
    * The URL of the image.
    */
   url: string;
-  alt: string;
+  /**
+   * The alt text of the image.
+   */
+  alt: string | null;
 }
 
 export interface VariantList_productVariants_edges_node_pricing_priceUndiscounted_gross {
@@ -179,6 +183,7 @@ export interface VariantList_productVariants_edges_node_product {
    * The ID of the object.
    */
   id: string;
+  slug: string;
   name: string;
   /**
    * The main thumbnail for a product.
@@ -198,10 +203,6 @@ export interface VariantList_productVariants_edges_node {
   id: string;
   sku: string;
   name: string;
-  /**
-   * Whether the variant is in stock and visible or not.
-   */
-  isAvailable: boolean | null;
   /**
    * Quantity of a product available for sale in one checkout.
    */
@@ -243,5 +244,6 @@ export interface VariantList {
 
 export interface VariantListVariables {
   ids?: string[] | null;
+  channel?: string | null;
   countryCode?: CountryCode | null;
 }

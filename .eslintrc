@@ -10,7 +10,13 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "plugins": ["@typescript-eslint", "import", "react", "prettier"],
+  "plugins": [
+    "@typescript-eslint",
+    "import",
+    "react",
+    "prettier",
+    "simple-import-sort"
+  ],
   "rules": {
     "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/indent": "off",
@@ -28,13 +34,14 @@
           "**/tests.tsx",
           "config/**/*",
           "*.config.js",
-          "src/@next/pages/baseStory.ts"
+          "src/@next/pages/baseStory.ts",
+          "cypress/**/*"
         ]
       }
     ],
     "import/no-internal-modules": "off",
     "import/no-named-as-default": "off",
-    "import/order": "error",
+    "import/order": "off",
     "import/prefer-default-export": "off",
     "no-nested-ternary": "off",
     "prettier/prettier": ["error"],
@@ -46,7 +53,6 @@
     "no-underscore-dangle": "off",
     "react/state-in-constructor": "off",
     "react/static-property-placement": "off",
-
     "sort-keys": "off",
     "no-prototype-builtins": "off",
     "no-shadow": "off",
@@ -66,7 +72,42 @@
     "no-param-reassign": "off",
     "no-empty-pattern": "off",
     "no-restricted-globals": "off",
-    "@typescript-eslint/no-unused-vars": "off"
+    "@typescript-eslint/no-unused-vars": "off",
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "components": ["Link"],
+        "specialLink": ["href", "to"],
+        "aspects": ["invalidHref", "preferButton"]
+      }
+    ],
+    "no-await-in-loop": "off",
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          // Side effect imports.
+          ["^\\u0000"],
+          // Packages.
+          // Things that start with a letter (or digit or underscore), or `@` followed by a letter.
+          ["^@?\\w"],
+          // Absolute imports and other imports such as Vue-style `@/foo`.
+          // Anything that does not start with a dot.
+          ["^[^. ]"],
+          // ALiases.
+          [
+            "^(@components|@paths|@pages|@utils|@hooks|@types|@app|@locale|@temp|@styles|@graphql)(/.*|$)"
+          ],
+          // Relative imports.
+          // Anything that starts with a dot.
+          ["^\\."],
+          // Assets.
+          ["^(images|!!raw-loader)"],
+          // Styles
+          ["w*(w*.*css)"]
+        ]
+      }
+    ]
   },
   "settings": {
     "import/resolver": {

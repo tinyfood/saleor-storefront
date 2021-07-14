@@ -13,7 +13,6 @@ import {
   PaymentData,
 } from "../../../../core/payments/braintree";
 import { maybe, removeEmptySpaces } from "../../../../core/utils";
-
 import * as S from "./styles";
 import { IProps } from "./types";
 
@@ -92,7 +91,10 @@ const BraintreePaymentGateway: React.FC<IProps> = ({
     if (payment?.token) {
       processPayment(payment?.token, {
         brand: payment?.ccType,
+        firstDigits: null,
         lastDigits: payment?.lastDigits,
+        expMonth: null,
+        expYear: null,
       });
     } else {
       const braintreePayloadErrors = [

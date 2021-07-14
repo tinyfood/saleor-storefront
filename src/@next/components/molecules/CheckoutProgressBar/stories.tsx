@@ -1,8 +1,6 @@
-import { number } from "@storybook/addon-knobs";
 import { storiesOf } from "@storybook/react";
 import React from "react";
 import { IntlProvider } from "react-intl";
-import { MemoryRouter } from "react-router";
 
 import { CheckoutProgressBar } from ".";
 
@@ -30,24 +28,26 @@ const steps = [
   },
 ];
 
-const label = "Active step";
-const defaultValue = 1;
-const options = {
-  max: 3,
-  min: 0,
-  range: true,
-  step: 1,
-};
-
 storiesOf("@components/molecules/CheckoutProgressBar", module)
   .addParameters({ component: CheckoutProgressBar })
-  .add("default", () => {
-    const value = number(label, defaultValue, options);
+  .add("first", () => {
     return (
       <IntlProvider locale="en">
-        <MemoryRouter>
-          <CheckoutProgressBar steps={steps} activeStep={value} />
-        </MemoryRouter>
+        <CheckoutProgressBar steps={steps} activeStep={1} />
+      </IntlProvider>
+    );
+  })
+  .add("second", () => {
+    return (
+      <IntlProvider locale="en">
+        <CheckoutProgressBar steps={steps} activeStep={2} />
+      </IntlProvider>
+    );
+  })
+  .add("third", () => {
+    return (
+      <IntlProvider locale="en">
+        <CheckoutProgressBar steps={steps} activeStep={3} />
       </IntlProvider>
     );
   });

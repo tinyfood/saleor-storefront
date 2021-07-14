@@ -1,14 +1,17 @@
+import Link from "next/link";
 import React from "react";
 import Media from "react-responsive";
 import { Transition } from "react-transition-group";
 
 import { Icon } from "@components/atoms";
+import { paths } from "@paths";
 import { largeScreen } from "@styles/constants";
-import LogoSmall from "images/logo-small.svg";
 
 import { Overlay } from "..";
 import * as S from "./styles";
 import { IProps, IState } from "./types";
+
+import LogoSmall from "images/logo-small.svg";
 
 const TopBar: React.FC<{ onHide: () => void }> = ({ children, onHide }) => (
   <S.Bar>
@@ -84,7 +87,9 @@ export const SideNavbar: React.FC<IProps> = ({
           <TopBar onHide={handleHide}>
             <S.LogoWrapper path={LogoSmall} />
           </TopBar>
-          <S.Link to="/">Home</S.Link>
+          <Link href={paths.home}>
+            <S.Link>Home</S.Link>
+          </Link>
           {items.map((item, index) =>
             item.children.length > 0 ? (
               <MenuItem
@@ -95,28 +100,34 @@ export const SideNavbar: React.FC<IProps> = ({
                 name={item.name}
               />
             ) : (
-              <S.NavLink fullWidth type="side" item={item} />
+              <S.NavLink fullWidth item={item} />
             )
           )}
           <Media maxWidth={largeScreen}>
             <S.Item>
-              <S.Link to="/wishlist">
-                <S.IconWrapper>
-                  <Icon name="heart" size={24} />
-                </S.IconWrapper>
-                <span>my wishlist</span>
-              </S.Link>
+              <Link href={paths.wishlist}>
+                <S.Link>
+                  <S.IconWrapper>
+                    <Icon name="heart" size={24} />
+                  </S.IconWrapper>
+                  <span>my wishlist</span>
+                </S.Link>
+              </Link>
             </S.Item>
             <S.Item>
-              <S.Link to="/account">
-                <S.IconWrapper>
-                  <Icon name="profile" size={24} />
-                </S.IconWrapper>
-                <span>my profile</span>
-              </S.Link>
+              <Link href={paths.account}>
+                <S.Link>
+                  <S.IconWrapper>
+                    <Icon name="profile" size={24} />
+                  </S.IconWrapper>
+                  <span>my profile</span>
+                </S.Link>
+              </Link>
             </S.Item>
             <S.Item>
-              <S.Link to="/">english</S.Link>
+              <Link href={paths.home}>
+                <S.Link>english</S.Link>
+              </Link>
             </S.Item>
           </Media>
         </S.Menu>
@@ -159,7 +170,7 @@ export const SideNavbar: React.FC<IProps> = ({
                     name={item.name}
                   />
                 ) : (
-                  <S.NavLink fullWidth type="side" item={item} />
+                  <S.NavLink fullWidth item={item} />
                 )
               )}
             </S.Menu>
@@ -196,7 +207,7 @@ export const SideNavbar: React.FC<IProps> = ({
               </TopBar>
               {items[view.index!].children[view.depth!].children.map(
                 (item, i) => (
-                  <S.NavLink key={i} fullWidth type="side" item={item} />
+                  <S.NavLink key={i} fullWidth item={item} />
                 )
               )}
             </S.Menu>

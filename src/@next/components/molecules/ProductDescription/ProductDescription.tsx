@@ -1,19 +1,18 @@
 import React from "react";
 import { FormattedMessage } from "react-intl";
 
-import { RichTextContent } from "@components/atoms";
+import { RichTextEditorContent } from "@components/atoms";
 
 import * as S from "./styles";
 import { IProps } from "./types";
 
 enum TABS {
-  DESCRIPTION,
-  ATTRIBUTES,
+  DESCRIPTION = "DESCRIPION",
+  ATTRIBUTES = "ATTRIBUTES",
 }
 
 export const ProductDescription: React.FC<IProps> = ({
-  description = "",
-  descriptionJson = "",
+  description,
   attributes,
 }: IProps) => {
   const [activeTab, setActiveTab] = React.useState<TABS>(TABS.DESCRIPTION);
@@ -48,13 +47,10 @@ export const ProductDescription: React.FC<IProps> = ({
           <FormattedMessage defaultMessage="ATTRIBUTES" />
         </S.TabTitle>
       </S.Tabs>
-      {activeTab === TABS.DESCRIPTION &&
-        (descriptionJson ? (
-          <RichTextContent descriptionJson={descriptionJson} />
-        ) : (
-          <p>{description}</p>
-        ))}
-      {activeTab === TABS.ATTRIBUTES && (
+      <div hidden={activeTab !== TABS.DESCRIPTION}>
+        <RichTextEditorContent jsonData={description} />
+      </div>
+      <div hidden={activeTab !== TABS.ATTRIBUTES}>
         <S.AttributeList>
           {attributes &&
             attributes.map((attribute, index) => (
@@ -64,7 +60,7 @@ export const ProductDescription: React.FC<IProps> = ({
               </li>
             ))}
         </S.AttributeList>
-      )}
+      </div>
     </S.Wrapper>
   );
 };

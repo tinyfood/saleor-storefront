@@ -1,10 +1,12 @@
+import Link from "next/link";
 import React from "react";
-import { useIntl, IntlShape } from "react-intl";
-import { Link } from "react-router-dom";
+import { IntlShape, useIntl } from "react-intl";
+
 import { checkoutMessages } from "@temp/intl";
+import { ICheckoutStep } from "@types";
 
 import * as S from "./styles";
-import { IProps, IStep } from "./types";
+import { IProps } from "./types";
 
 const activeDot = (
   <S.ActiveDot>
@@ -53,11 +55,11 @@ const generateProgressBar = (
 };
 
 const generateSteps = (
-  steps: IStep[],
+  steps: ICheckoutStep[],
   currentActive: number,
   intl: IntlShape
 ) => {
-  return steps?.map(step => {
+  return steps?.map((step, index) => {
     let { name } = step;
     /* eslint-disable default-case */
     switch (step.name) {
@@ -76,11 +78,13 @@ const generateSteps = (
     }
     return (
       <S.Step key={step.index}>
-        <Link to={step.link}>
-          {generateDot(step.index, currentActive)}
-          {generateLabel(step.index, name, steps.length)}
+        <Link href={step.link}>
+          <a>
+            {generateDot(index, currentActive)}
+            {generateLabel(index, name, steps.length)}
+          </a>
         </Link>
-        {generateProgressBar(step.index, currentActive, steps.length)}
+        {generateProgressBar(index, currentActive, steps.length)}
       </S.Step>
     );
   });

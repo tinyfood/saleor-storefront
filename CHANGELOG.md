@@ -4,19 +4,58 @@ All notable, unreleased changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Add EditorJS embeded renderer - SALEOR-3354 by @mociepka
+- Handle Order confirmation at Thank You page - #956 by @mmarkusik
+- Add EditorJS renderer - #947 by @krzysztofwolski
+- New cart sidebar - #907 by @orzechdev
+- Support for multichannel - #937 by @AlicjaSzu
+- Add next.js to the Storefront - #955 by @piotrgrundas
+- Fixed image scaling in gallery and thumbnails - #959 by @MarekChoinski
+- Use only selection attributes in variant picker - #963 by @orzechdev
+- Drop deprecated `ProductVariant.isAvailable` field - #965 by @maarcingebala
+- Add eslint import sort - #979 by @pitorgrundas
+- Enable incremental server-side regeneration for store pages - #988 by @pitorgrundas
+- Update account mutations with channel slug - #1039 by @orzechdev
+- Update register mutation with channel slug - #1045 by @orzechdev
+- Update queries with new channel API - #1072 by @orzechdev
+- Change order number format - #1073 by @kamilpastuszka
+- Use new Stripe payment gateway - #1057 by @orzechdev
+
+## 2.11.0
+
 - Add product hyperlink in cart page - #745 by @konstantinoschristomanos
 - Add Cypress tags to all of the buttons (also speed up tests) - #718 by @krzysztofwolski
 - Automatically choose variant attributes from url in ProductVariantPicker - #708 by @AlicjaSzu
-- Use sdk as a standalone package - #724 by @dominik-zeglen
-- Use auth api from sdk - #727 by @orzechdev
-- Fix CartRow tests - #749 by @dominik-zeglen
+- Use SDK as a standalone package - #724 by @dominik-zeglen
+- Use auth API from SDK - #727 by @orzechdev
+- Fix `CartRow` tests - #749 by @dominik-zeglen
 - Add prettier to precommit - #766 by @dominik-zeglen
 - Do not use prettier on generated files - #773 by @dominik-zeglen
-- Add eslint - #776 by @dominik-zeglen
+- Add Eslint - #776 by @dominik-zeglen
 - Fix storybook config - #789 by @dominik-zeglen
-- Update sdk to newest version - #795 by @dominik-zeglen
+- Update SDK to newest version - #795 by @dominik-zeglen
 - Use intl - #782 by @przlada
 - Download invoice for order - #790 by @orzechdev
+- Do not throw error if unsupported payment gateway found - #819 by @dominik-zeglen
+- Fix tsconfig aliases - #824 by @orzechdev
+- Set billing address in first checkout step - #822 by @orzechdev
+- Persist payment gateways for the whole checkout - #828 by @orzechdev
+- Add test tags to address book - #847 by @dominik-zeglen
+- Refresh user data if mutation fails - #854 by @dominik-zeglen
+- Fix product list data overfetching - #855 by @dominik-zeglen
+- Add Adyen payment gateway - #845 by @orzechdev
+- Fix crash on null price range - #875 by @orzechdev
+- Update collection products query - #879 by @orzechdev
+- Fix checkout refreshing - #865 by @orzechdev
+- Add purchase availability to product details page - #878 by @orzechdev
+- Require payment recreate when payment price is wrong - #892 by @orzechdev
+- Handle JWT token refreshing and verifying - #883 by @orzechdev
+- Fix cart sidebar style - #897 by @orzechdev
+- Refactor variant picker components and open sidebar after adding product to cart - #809 by @krzysztofwolski
+- Fix checkout address view - #909 by @konstantinoschristomanos
+- Support for static URL - #721 by @marianoeramirez and @dominik-zeglen
+- Fix search crashing when displaying item with no category - #928 by @mmarkusik
+- Fix generating site map - #915 by @rboixaderg
 
 ## 2.10.4
 

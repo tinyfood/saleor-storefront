@@ -1,62 +1,17 @@
 import gql from "graphql-tag";
+
+import {
+  basicProductFragment,
+  productPricingFragment,
+  taxedPriceFragment,
+} from "@graphql";
+
 import { TypedQuery } from "../../core/queries";
 import {
   ProductDetails,
   ProductDetailsVariables,
 } from "./gqlTypes/ProductDetails";
 import { VariantList, VariantListVariables } from "./gqlTypes/VariantList";
-
-export const priceFragment = gql`
-  fragment Price on TaxedMoney {
-    gross {
-      amount
-      currency
-    }
-    net {
-      amount
-      currency
-    }
-  }
-`;
-
-export const basicProductFragment = gql`
-  fragment BasicProductFields on Product {
-    id
-    name
-    thumbnail {
-      url
-      alt
-    }
-    thumbnail2x: thumbnail(size: 510) {
-      url
-    }
-  }
-`;
-
-export const productPricingFragment = gql`
-  ${priceFragment}
-  fragment ProductPricingField on Product {
-    pricing {
-      onSale
-      priceRangeUndiscounted {
-        start {
-          ...Price
-        }
-        stop {
-          ...Price
-        }
-      }
-      priceRange {
-        start {
-          ...Price
-        }
-        stop {
-          ...Price
-        }
-      }
-    }
-  }
-`;
 
 export const selectedAttributeFragment = gql`
   fragment SelectedAttributeFields on SelectedAttribute {
@@ -72,12 +27,11 @@ export const selectedAttributeFragment = gql`
 `;
 
 export const productVariantFragment = gql`
-  ${priceFragment}
+  ${taxedPriceFragment}
   fragment ProductVariantFields on ProductVariant {
     id
     sku
     name
-    isAvailable
     quantityAvailable(countryCode: $countryCode)
     images {
       id
@@ -87,13 +41,13 @@ export const productVariantFragment = gql`
     pricing {
       onSale
       priceUndiscounted {
-        ...Price
+        ...TaxedPrice
       }
       price {
-        ...Price
+        ...TaxedPrice
       }
     }
-    attributes {
+    attributes(variantSelection: VARIANT_SELECTION) {
       attribute {
         id
         name
@@ -113,15 +67,15 @@ export const productDetailsQuery = gql`
   ${selectedAttributeFragment}
   ${productVariantFragment}
   ${productPricingFragment}
-  query ProductDetails($id: ID!, $countryCode: CountryCode) {
-    product(id: $id) {
+  query ProductDetails($id: ID!, $channel: String, $countryCode: CountryCode) {
+    product(id: $id, channel: $channel) {
       ...BasicProductFields
       ...ProductPricingField
-      descriptionJson
+      description
       category {
         id
         name
-        products(first: 3) {
+        products(first: 3, channel: $channel) {
           edges {
             node {
               ...BasicProductFields
@@ -144,6 +98,8 @@ export const productDetailsQuery = gql`
       seoDescription
       seoTitle
       isAvailable
+      isAvailableForPurchase
+      availableForPurchase
     }
   }
 `;
@@ -153,8 +109,8 @@ export const productDetailsQuery = gql`
 export const productVariantsQuery = gql`
   ${basicProductFragment}
   ${productVariantFragment}
-  query VariantList($ids: [ID!], $countryCode: CountryCode) {
-    productVariants(ids: $ids, first: 100) {
+  query VariantList($ids: [ID!], $channel: String, $countryCode: CountryCode) {
+    productVariants(ids: $ids, first: 100, channel: $channel) {
       edges {
         node {
           ...ProductVariantFields

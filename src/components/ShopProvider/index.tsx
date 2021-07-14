@@ -1,15 +1,19 @@
-import * as React from "react";
+import React, { useState } from "react";
 
-import { useShopDetails } from "@saleor/sdk";
-import { maybe } from "../../core/utils";
+import { ShopConfig } from "@utils/ssr";
+
 import { defaultContext, ShopContext } from "./context";
 
-const ShopProvider: React.FC = ({ children }) => {
-  const { data } = useShopDetails();
+type ShopProviderPops = { shopConfig: ShopConfig["shopConfig"] };
+
+const ShopProvider: React.FC<ShopProviderPops> = ({ shopConfig, children }) => {
+  const [context] = useState<ShopConfig["shopConfig"]>({
+    ...defaultContext,
+    ...shopConfig,
+  });
+
   return (
-    <ShopContext.Provider value={maybe(() => data.shop, defaultContext)}>
-      {children}
-    </ShopContext.Provider>
+    <ShopContext.Provider value={context}>{children}</ShopContext.Provider>
   );
 };
 

@@ -1,6 +1,7 @@
+import { GetShop_shop_countries } from "@saleor/sdk/lib/queries/gqlTypes/GetShop";
+
 import { IAddressWithAddressType } from "@types";
 
-import { GetShop_shop_countries } from "@saleor/sdk/lib/queries/gqlTypes/GetShop";
 import { Address } from "./types";
 
 const formAddress: IAddressWithAddressType = {
@@ -61,6 +62,7 @@ const countries: GetShop_shop_countries[] = [
 ];
 
 export const LOGGED_IN_USER_PROPS = {
+  billingAsShippingPossible: true,
   countries,
   userAddresses: [
     {
@@ -70,6 +72,8 @@ export const LOGGED_IN_USER_PROPS = {
 };
 
 export const ANONYMOUS_USER_PROPS = {
-  checkoutAddress: formAddress,
+  billingAsShippingPossible: true,
+  checkoutShippingAddress: formAddress,
+  checkoutBillingAddress: formAddress,
   countries,
 };

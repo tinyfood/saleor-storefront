@@ -1,16 +1,19 @@
-import "./scss/index.scss";
-
-import * as React from "react";
+import { NextPage } from "next";
+import Link from "next/link";
+import React from "react";
 import { FormattedMessage } from "react-intl";
-import { Link } from "react-router-dom";
-import { BASE_URL } from "../../core/config";
+
+import { paths } from "@paths";
+
 import Button from "../Button";
+
+import "./scss/index.scss";
 
 interface NotFoundProps {
   message?: string;
 }
 
-const NotFound: React.FC<NotFoundProps> = () => (
+const NotFound: NextPage<NotFoundProps> = () => (
   <div className="not-found-page">
     <h2 className="not-found-page__header">
       <FormattedMessage defaultMessage="404" />
@@ -28,10 +31,12 @@ const NotFound: React.FC<NotFoundProps> = () => (
       </p>
     </div>
     <div className="not-found-page__button">
-      <Link to={BASE_URL}>
-        <Button testingContext="404pageGotoHomeButton" secondary>
-          <FormattedMessage defaultMessage="Back to home" />
-        </Button>
+      <Link href={paths.home}>
+        <a>
+          <Button testingContext="404pageGotoHomeButton" secondary>
+            <FormattedMessage defaultMessage="Back to home" />
+          </Button>
+        </a>
       </Link>
     </div>
   </div>

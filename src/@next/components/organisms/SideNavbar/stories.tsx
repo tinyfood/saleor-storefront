@@ -1,11 +1,9 @@
 import { action } from "@storybook/addon-actions";
 import { storiesOf } from "@storybook/react";
 import React from "react";
-import { BrowserRouter } from "react-router-dom";
-
-import { items } from "./fixtures";
 
 import { SideNavbar } from ".";
+import { items } from "./fixtures";
 
 let portalRoot = document.getElementById("portal-root");
 if (!portalRoot) {
@@ -16,12 +14,10 @@ if (!portalRoot) {
 storiesOf("@components/organisms/SideNavbar", module)
   .addParameters({ component: SideNavbar })
   .add("default", () => (
-    <BrowserRouter>
-      <SideNavbar
-        show
-        onHide={action("hide")}
-        target={portalRoot}
-        items={items}
-      />
-    </BrowserRouter>
+    <SideNavbar
+      show
+      onHide={action("hide")}
+      target={portalRoot}
+      items={items}
+    />
   ));

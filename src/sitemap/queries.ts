@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 export const getProductsQuery = gql`
-  query GetProducts($cursor: String, $perPage: Int) {
-    products(after: $cursor, first: $perPage) {
+  query GetProducts($cursor: String, $perPage: Int, $channel: String) {
+    products(after: $cursor, first: $perPage, channel: $channel) {
       pageInfo {
         endCursor
         hasNextPage
@@ -11,6 +11,7 @@ export const getProductsQuery = gql`
         node {
           id
           name
+          slug
         }
       }
     }
@@ -28,6 +29,7 @@ export const getCategoriesQuery = gql`
         node {
           id
           name
+          slug
         }
       }
     }
@@ -35,8 +37,8 @@ export const getCategoriesQuery = gql`
 `;
 
 export const getCollectionsQuery = gql`
-  query GetCollections($cursor: String, $perPage: Int) {
-    collections(after: $cursor, first: $perPage) {
+  query GetCollections($cursor: String, $perPage: Int, $channel: String) {
+    collections(after: $cursor, first: $perPage, channel: $channel) {
       pageInfo {
         endCursor
         hasNextPage
@@ -45,6 +47,7 @@ export const getCollectionsQuery = gql`
         node {
           id
           name
+          slug
         }
       }
     }

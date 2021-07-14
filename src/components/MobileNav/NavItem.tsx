@@ -2,13 +2,13 @@ import classNames from "classnames";
 import * as React from "react";
 import ReactSVG from "react-svg";
 
-import { NavLink } from "..";
-import { MainMenuSubItem } from "../MainMenu/gqlTypes/MainMenuSubItem";
+import { MenuItem } from "@graphql/gqlTypes/MenuItem";
 
 import subcategoriesImg from "../../images/subcategories.svg";
+import { NavLink } from "..";
 
-export interface INavItem extends MainMenuSubItem {
-  children?: INavItem[];
+export interface INavItem extends MenuItem {
+  children?: MenuItem[];
 }
 
 interface NavItemProps extends INavItem {

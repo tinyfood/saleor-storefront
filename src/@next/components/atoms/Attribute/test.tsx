@@ -1,5 +1,6 @@
-import { shallow } from "enzyme";
 import "jest-styled-components";
+
+import { shallow } from "enzyme";
 import React from "react";
 
 import { Attribute } from ".";
@@ -7,6 +8,7 @@ import { Attribute } from ".";
 const DEFAULT_PROPS = {
   attributeValue: "John",
   description: "First name",
+  testingContext: "firstNameAttribute",
 };
 
 describe("<Attribute />", () => {

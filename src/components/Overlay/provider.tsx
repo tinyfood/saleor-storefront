@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unused-state */
 
 import * as React from "react";
-import { RouteComponentProps, withRouter } from "react-router";
+
 import {
   InnerOverlayContextInterface,
   OverlayContext,
@@ -11,7 +11,7 @@ import {
 } from "./context";
 
 class Provider extends React.Component<
-  RouteComponentProps<{}>,
+  { pathname: string },
   OverlayContextInterface
 > {
   notificationCloseDelay = 2500;
@@ -29,7 +29,7 @@ class Provider extends React.Component<
 
   componentDidUpdate(prevProps) {
     if (
-      this.props.location.pathname !== prevProps.location.pathname &&
+      this.props.pathname !== prevProps.pathname &&
       this.state.type !== OverlayType.message
     ) {
       this.hide();
@@ -62,4 +62,4 @@ class Provider extends React.Component<
   }
 }
 
-export default withRouter(Provider);
+export default Provider;

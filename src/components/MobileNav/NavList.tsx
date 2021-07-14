@@ -1,14 +1,16 @@
-import "./scss/index.scss";
-
+import Link from "next/link";
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { FormattedMessage } from "react-intl";
 import ReactSVG from "react-svg";
 
-import { baseUrl } from "../../app/routes";
-import NavItem, { INavItem } from "./NavItem";
+import { paths } from "@paths";
+import { commonMessages } from "@temp/intl";
 
 import backImg from "../../images/arrow-back.svg";
 import logoImg from "../../images/logo.svg";
+import NavItem, { INavItem } from "./NavItem";
+
+import "./scss/index.scss";
 
 interface NavListProps {
   items: INavItem[];
@@ -72,24 +74,22 @@ class NavList extends React.PureComponent<NavListProps, NavListState> {
         ) : (
           <>
             <li className="side-nav__menu-item side-nav__menu-item--parent">
-              <Link
-                to={baseUrl}
-                className="side-nav__menu-item-logo"
-                onClick={hideOverlay}
-              >
-                <ReactSVG path={logoImg} />
+              <Link href={paths.home}>
+                <a className="side-nav__menu-item-logo">
+                  <ReactSVG path={logoImg} onClick={hideOverlay} />
+                </a>
               </Link>
-              <span className="side-nav__menu-item-close" onClick={hideOverlay}>
+              <span className="side-nav__menu-item-close">
                 <span />
               </span>
             </li>
             <li className="side-nav__menu-item">
-              <Link
-                to={baseUrl}
-                className="side-nav__menu-item-link"
-                onClick={hideOverlay}
-              >
-                Home
+              <Link href={paths.home}>
+                <a className="side-nav__menu-item-link">
+                  <span onClick={hideOverlay}>
+                    <FormattedMessage {...commonMessages.home} />
+                  </span>
+                </a>
               </Link>
             </li>
           </>

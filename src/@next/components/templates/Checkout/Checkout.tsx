@@ -3,7 +3,6 @@ import React from "react";
 import { Loader } from "@components/atoms";
 
 import { Container } from "../Container";
-
 import * as S from "./styles";
 import { IProps } from "./types";
 
@@ -14,6 +13,8 @@ const Checkout: React.FC<IProps> = ({
   loading,
   navigation,
   checkout,
+  paymentGateways,
+  hidePaymentGateways = false,
   cartSummary,
   button,
 }: IProps) => {
@@ -27,6 +28,9 @@ const Checkout: React.FC<IProps> = ({
       <S.Wrapper>
         <S.Navigation>{navigation}</S.Navigation>
         <S.Checkout>{checkout}</S.Checkout>
+        <S.PaymentGateways hide={hidePaymentGateways}>
+          {paymentGateways}
+        </S.PaymentGateways>
         <S.CartSummary>{cartSummary}</S.CartSummary>
         <S.Button>{button}</S.Button>
       </S.Wrapper>

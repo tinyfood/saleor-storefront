@@ -7,7 +7,6 @@ import { AddressTileOption } from "@components/molecules";
 import { checkoutMessages } from "@temp/intl";
 
 import { AddressFormModal } from "../AddressFormModal";
-
 import { IProps } from "./types";
 
 /**
@@ -24,13 +23,14 @@ const AddressGridSelector: React.FC<IProps> = ({
   formRef,
   addNewModalTarget,
   newAddressFormId,
+  testingContext,
 }: IProps) => {
   const [displayNewModal, setDisplayNewModal] = useState(false);
   const intl = useIntl();
 
   const addNewTile = (
     <AddNewTile
-      data-test="addressTileAddNew"
+      data-test={`${testingContext}AddressTileAddNew`}
       key="newTile"
       type={intl.formatMessage({ defaultMessage: "address" })}
       onClick={() => setDisplayNewModal(true)}
@@ -70,7 +70,8 @@ const AddressGridSelector: React.FC<IProps> = ({
                   (elements, { id, address }, index) => {
                     elements.push(
                       <AddressTileOption
-                        data-test="addressTileOption"
+                        testingContext={testingContext}
+                        data-test={`${testingContext}AddressTileOption`}
                         data-test-id={index}
                         key={`addressTile-${id}`}
                         id={id}

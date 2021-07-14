@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 import { AttributeInput, ProductOrder } from "./../../../../gqlTypes/globalTypes";
@@ -232,6 +233,7 @@ export interface SearchProducts_products_edges_node {
    */
   id: string;
   name: string;
+  slug: string;
   /**
    * The main thumbnail for a product.
    */
@@ -276,7 +278,7 @@ export interface SearchProducts_products {
   pageInfo: SearchProducts_products_pageInfo;
 }
 
-export interface SearchProducts_attributes_edges_node_values {
+export interface SearchProducts_attributes_edges_node_choices_edges_node {
   __typename: "AttributeValue";
   /**
    * The ID of the object.
@@ -290,6 +292,19 @@ export interface SearchProducts_attributes_edges_node_values {
    * Internal representation of a value (unique per attribute).
    */
   slug: string | null;
+}
+
+export interface SearchProducts_attributes_edges_node_choices_edges {
+  __typename: "AttributeValueCountableEdge";
+  /**
+   * The item at the end of the edge.
+   */
+  node: SearchProducts_attributes_edges_node_choices_edges_node;
+}
+
+export interface SearchProducts_attributes_edges_node_choices {
+  __typename: "AttributeValueCountableConnection";
+  edges: SearchProducts_attributes_edges_node_choices_edges[];
 }
 
 export interface SearchProducts_attributes_edges_node {
@@ -309,7 +324,7 @@ export interface SearchProducts_attributes_edges_node {
   /**
    * List of attribute's values.
    */
-  values: (SearchProducts_attributes_edges_node_values | null)[] | null;
+  choices: SearchProducts_attributes_edges_node_choices | null;
 }
 
 export interface SearchProducts_attributes_edges {
@@ -338,6 +353,7 @@ export interface SearchProducts {
 
 export interface SearchProductsVariables {
   query: string;
+  channel: string;
   attributes?: (AttributeInput | null)[] | null;
   pageSize?: number | null;
   sortBy?: ProductOrder | null;

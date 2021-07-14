@@ -1,16 +1,17 @@
-import "./scss/index.scss";
-
 import * as React from "react";
-
 import { AlertManager, useAlert } from "react-alert";
-import { useIntl, IntlShape } from "react-intl";
-import { commonMessages } from "@temp/intl";
-import { accountConfirmUrl } from "../../../app/routes";
+import { IntlShape, useIntl } from "react-intl";
 
-import { Button, Form, TextField } from "../..";
+import { paths } from "@paths";
+import { channelSlug } from "@temp/constants";
+import { commonMessages } from "@temp/intl";
+
 import { maybe } from "../../../core/utils";
+import { Button, Form, TextField } from "../..";
 import { RegisterAccount } from "./gqlTypes/RegisterAccount";
 import { TypedAccountRegisterMutation } from "./queries";
+
+import "./scss/index.scss";
 
 const showSuccessNotification = (
   data: RegisterAccount,
@@ -50,8 +51,15 @@ const RegisterForm: React.FC<{ hide: () => void }> = ({ hide }) => {
             errors={maybe(() => data.accountRegister.errors, [])}
             onSubmit={(event, { email, password }) => {
               event.preventDefault();
-              const redirectUrl = `${window.location.origin}${accountConfirmUrl}`;
-              registerCustomer({ variables: { email, password, redirectUrl } });
+              const redirectUrl = `${location.origin}${paths.accountConfirm}`;
+              registerCustomer({
+                variables: {
+                  email,
+                  password,
+                  redirectUrl,
+                  channel: channelSlug,
+                },
+              });
             }}
           >
             <TextField

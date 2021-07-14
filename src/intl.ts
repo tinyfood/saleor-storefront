@@ -13,6 +13,12 @@ export const commonMessages = defineMessages({
   noItemsAvailable: {
     defaultMessage: "No items available",
   },
+  noPurchaseAvailable: {
+    defaultMessage: "Not available for purchase",
+  },
+  purchaseAvailableOn: {
+    defaultMessage: `Will become available for purchase on {date} at {time}`,
+  },
   youMightLike: {
     defaultMessage: "You might like",
   },
@@ -121,6 +127,9 @@ export const commonMessages = defineMessages({
   cancel: {
     defaultMessage: "Cancel",
   },
+  home: {
+    defaultMessage: "Home",
+  },
 });
 
 export const checkoutMessages = defineMessages({
@@ -210,6 +219,24 @@ export const paymentStatusMessages = defineMessages({
   },
   fullyRefunded: {
     defaultMessage: "Fully refunded",
+  },
+});
+
+export const paymentErrorMessages = defineMessages({
+  paymentNoConfirmationData: {
+    defaultMessage:
+      "Payment needs confirmation but data required for confirmation not received from the server.",
+    description: "payment gateway error",
+  },
+  paymentMalformedConfirmationData: {
+    defaultMessage:
+      "Payment needs confirmation but data required for confirmation received from the server is malformed.",
+    description: "payment gateway error",
+  },
+  cannotHandlePaymentConfirmation: {
+    defaultMessage:
+      "Payment gateway did not provide payment confirmation handler.",
+    description: "payment gateway error",
   },
 });
 

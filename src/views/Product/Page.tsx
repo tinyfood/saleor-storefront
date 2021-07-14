@@ -1,25 +1,34 @@
+import { ProductDetails } from "@saleor/sdk/lib/fragments/gqlTypes/ProductDetails";
 import classNames from "classnames";
 import React from "react";
 import Media from "react-media";
-import { smallScreen } from "../../globalStyles/scss/variables.scss";
+import { generatePath } from "react-router";
 
-import { Breadcrumbs, ProductDescription } from "../../components";
-import { generateCategoryUrl, generateProductUrl } from "../../core/utils";
+import { ProductDescription } from "@components/molecules";
+import { ProductGallery } from "@components/organisms";
+import AddToCartSection from "@components/organisms/AddToCartSection";
+import { paths } from "@paths";
+
+import {
+  Breadcrumbs,
+  OverlayContext,
+  OverlayTheme,
+  OverlayType,
+} from "../../components";
+import { structuredData } from "../../core/SEO/Product/structuredData";
 import GalleryCarousel from "./GalleryCarousel";
 import OtherProducts from "./Other";
-
-import { ProductDescription as NewProductDescription } from "../../@next/components/molecules";
-import { ProductGallery } from "../../@next/components/organisms";
-import { structuredData } from "../../core/SEO/Product/structuredData";
 import { IProps } from "./types";
 
-const populateBreadcrumbs = product => [
+import { smallScreen } from "../../globalStyles/scss/variables.scss";
+
+const populateBreadcrumbs = (product: ProductDetails) => [
   {
-    link: generateCategoryUrl(product.category.id, product.category.name),
+    link: generatePath(paths.category, { slug: product.category.slug }),
     value: product.category.name,
   },
   {
-    link: generateProductUrl(product.id, product.name),
+    link: generatePath(paths.product, { slug: product.slug }),
     value: product.name,
   },
 ];
@@ -30,34 +39,45 @@ const Page: React.FC<
     onAttributeChangeHandler: (slug: string | null, value: string) => void;
   }
 > = ({ add, product, items, queryAttributes, onAttributeChangeHandler }) => {
+  const overlayContext = React.useContext(OverlayContext);
+
   const productGallery: React.RefObject<HTMLDivElement> = React.useRef();
 
   const [variantId, setVariantId] = React.useState("");
 
   const getImages = () => {
     if (product.variants && variantId) {
-      const variant = product.variants
-        .filter(variant => variant.id === variantId)
-        .pop();
-      if (variant.images.length > 0) {
+      const variant = product.variants.find(
+        variant => variant.id === variantId
+      );
+
+      if (variant?.images.length > 0) {
         return variant.images;
       }
-      return product.images;
     }
+
     return product.images;
   };
 
-  const productDescription = (
-    <ProductDescription
+  const handleAddToCart = (variantId, quantity) => {
+    add(variantId, quantity);
+    overlayContext.show(OverlayType.cart, OverlayTheme.right);
+  };
+
+  const addToCartSection = (
+    <AddToCartSection
       items={items}
       productId={product.id}
       name={product.name}
       productVariants={product.variants}
-      pricing={product.pricing}
+      productPricing={product.pricing}
       queryAttributes={queryAttributes}
-      addToCart={add}
       setVariantId={setVariantId}
+      variantId={variantId}
+      onAddToCart={handleAddToCart}
       onAttributeChangeHandler={onAttributeChangeHandler}
+      isAvailableForPurchase={product.isAvailableForPurchase}
+      availableForPurchase={product.availableForPurchase}
     />
   );
 
@@ -68,19 +88,16 @@ const Page: React.FC<
       </div>
       <div className="container">
         <div className="product-page__product">
-          {/* Add script here */}
           <script className="structured-data-list" type="application/ld+json">
             {structuredData(product)}
           </script>
-
-          {/*  */}
           <Media query={{ maxWidth: smallScreen }}>
             {matches =>
               matches ? (
                 <>
                   <GalleryCarousel images={getImages()} />
                   <div className="product-page__product__info">
-                    {productDescription}
+                    {addToCartSection}
                   </div>
                 </>
               ) : (
@@ -97,7 +114,7 @@ const Page: React.FC<
                         "product-page__product__info--fixed"
                       )}
                     >
-                      {productDescription}
+                      {addToCartSection}
                     </div>
                   </div>
                 </>
@@ -108,8 +125,8 @@ const Page: React.FC<
       </div>
       <div className="container">
         <div className="product-page__product__description">
-          <NewProductDescription
-            descriptionJson={product.descriptionJson}
+          <ProductDescription
+            description={product.description}
             attributes={product.attributes}
           />
         </div>

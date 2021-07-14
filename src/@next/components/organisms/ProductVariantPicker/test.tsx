@@ -1,5 +1,6 @@
-import { mount } from "enzyme";
 import "jest-styled-components";
+
+import { mount } from "enzyme";
 import React from "react";
 import { IntlProvider } from "react-intl";
 import { components } from "react-select";
@@ -7,7 +8,7 @@ import { components } from "react-select";
 import { OverlayItem } from "@components/molecules";
 import { SelectSidebar } from "@components/organisms";
 
-import { ProductVariantPicker } from ".";
+import ProductVariantPicker from ".";
 import { productVariants } from "./fixtures";
 
 let portalRoot = document.getElementById("portal-root");

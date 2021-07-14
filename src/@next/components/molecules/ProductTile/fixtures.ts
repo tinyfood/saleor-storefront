@@ -2,13 +2,13 @@ import { ProductList_products_edges_node } from "@saleor/sdk/lib/queries/gqlType
 
 export const PRODUCT: ProductList_products_edges_node = {
   __typename: "Product",
-  category: {
-    __typename: "Category",
-    id: "Q2F0ZWdvcnk6MTQ=",
-    name: "Juices",
-  },
   id: "UHJvZHVjdDo3Mg==",
   name: "Apple Juice",
+  slug: "apple-juice",
+  seoDescription: "Apple Juice Description",
+  seoTitle: "Apple Juice",
+  isAvailableForPurchase: true,
+  availableForPurchase: "2020-08-31",
   pricing: {
     __typename: "ProductPricingInfo",
     onSale: true,

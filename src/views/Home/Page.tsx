@@ -1,29 +1,27 @@
-import "./scss/index.scss";
-
 import classNames from "classnames";
+import Link from "next/link";
 import * as React from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Link } from "react-router-dom";
+import { generatePath } from "react-router";
 
-import { Button, Loader, ProductsFeatured } from "../../components";
-import { generateCategoryUrl } from "../../core/utils";
+import { paths } from "@paths";
+import { FeaturedProducts } from "@utils/ssr";
 
-import {
-  ProductsList_categories,
-  ProductsList_shop,
-  ProductsList_shop_homepageCollection_backgroundImage,
-} from "./gqlTypes/ProductsList";
-
+import { Button, ProductsFeatured } from "../../components";
 import { structuredData } from "../../core/SEO/Homepage/structuredData";
-
 import noPhotoImg from "../../images/no-photo.svg";
+import {
+  HomePageProducts_categories,
+  HomePageProducts_shop,
+} from "./gqlTypes/HomePageProducts";
+
+import "./scss/index.scss";
 
 const Page: React.FC<{
-  loading: boolean;
-  categories: ProductsList_categories;
-  backgroundImage: ProductsList_shop_homepageCollection_backgroundImage;
-  shop: ProductsList_shop;
-}> = ({ loading, categories, backgroundImage, shop }) => {
+  categories: HomePageProducts_categories;
+  featuredProducts: FeaturedProducts;
+  shop: HomePageProducts_shop;
+}> = ({ categories, featuredProducts, shop }) => {
   const categoriesExist = () => {
     return categories && categories.edges && categories.edges.length > 0;
   };
@@ -37,8 +35,10 @@ const Page: React.FC<{
       <div
         className="home-page__hero"
         style={
-          backgroundImage
-            ? { backgroundImage: `url(${backgroundImage.url})` }
+          featuredProducts.backgroundImage
+            ? {
+                backgroundImage: `url(${featuredProducts.backgroundImage.url})`,
+              }
             : null
         }
       >
@@ -59,25 +59,23 @@ const Page: React.FC<{
           </div>
         </div>
         <div className="home-page__hero-action">
-          {loading && !categories ? (
-            <Loader />
-          ) : (
-            categoriesExist() && (
-              <Link
-                to={generateCategoryUrl(
-                  categories.edges[0].node.id,
-                  categories.edges[0].node.name
-                )}
-              >
+          {categoriesExist() && (
+            <Link
+              href={generatePath(paths.category, {
+                slug: categories.edges[0].node.slug,
+              })}
+            >
+              <a>
                 <Button testingContext="homepageHeroActionButton">
                   <FormattedMessage defaultMessage="Shop sale" />
                 </Button>
-              </Link>
-            )
+              </a>
+            </Link>
           )}
         </div>
       </div>
       <ProductsFeatured
+        products={featuredProducts.products}
         title={intl.formatMessage({ defaultMessage: "Featured" })}
       />
       {categoriesExist() && (
@@ -90,25 +88,29 @@ const Page: React.FC<{
               {categories.edges.map(({ node: category }) => (
                 <div key={category.id}>
                   <Link
-                    to={generateCategoryUrl(category.id, category.name)}
+                    href={generatePath(paths.category, {
+                      slug: category.slug,
+                    })}
                     key={category.id}
                   >
-                    <div
-                      className={classNames(
-                        "home-page__categories__list__image",
-                        {
-                          "home-page__categories__list__image--no-photo": !category.backgroundImage,
-                        }
-                      )}
-                      style={{
-                        backgroundImage: `url(${
-                          category.backgroundImage
-                            ? category.backgroundImage.url
-                            : noPhotoImg
-                        })`,
-                      }}
-                    />
-                    <h3>{category.name}</h3>
+                    <a>
+                      <div
+                        className={classNames(
+                          "home-page__categories__list__image",
+                          {
+                            "home-page__categories__list__image--no-photo": !category.backgroundImage,
+                          }
+                        )}
+                        style={{
+                          backgroundImage: `url(${
+                            category.backgroundImage
+                              ? category.backgroundImage.url
+                              : noPhotoImg
+                          })`,
+                        }}
+                      />
+                      <h3>{category.name}</h3>
+                    </a>
                   </Link>
                 </div>
               ))}

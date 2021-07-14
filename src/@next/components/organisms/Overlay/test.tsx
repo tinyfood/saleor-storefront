@@ -1,5 +1,6 @@
-import { shallow } from "enzyme";
 import "jest-styled-components";
+
+import { shallow } from "enzyme";
 import React from "react";
 import { Transition } from "react-transition-group";
 
@@ -36,6 +37,7 @@ describe("<Overlay />", () => {
   const renderOverlayContent = (
     props: IProps,
     state: TransitionState = DEFAULT_STATE
+    // @ts-ignore
   ) => renderOverlay(props).find(Transition).renderProp("children")(state);
 
   it("exists", () => {

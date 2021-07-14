@@ -1,3 +1,4 @@
+import { useCheckout } from "@saleor/sdk";
 import React, {
   forwardRef,
   RefForwardingComponent,
@@ -5,31 +6,25 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { RouteComponentProps, useHistory } from "react-router";
 
 import { CheckoutShipping } from "@components/organisms";
-import { useCheckout } from "@saleor/sdk";
-import { CHECKOUT_STEPS } from "@temp/core/config";
 import { IFormError } from "@types";
 
-export interface ICheckoutShippingSubpageHandles {
-  submitShipping: () => void;
-}
-
-interface IProps extends RouteComponentProps<any> {
-  changeSubmitProgress: (submitInProgress: boolean) => void;
-}
+import {
+  CheckoutStep,
+  SubpageBaseProps,
+  SubpageCompleteHandler,
+} from "../utils";
 
 const CheckoutShippingSubpageWithRef: RefForwardingComponent<
-  ICheckoutShippingSubpageHandles,
-  IProps
-> = ({ changeSubmitProgress, ...props }: IProps, ref) => {
+  SubpageCompleteHandler,
+  SubpageBaseProps
+> = ({ changeSubmitProgress, onSubmitSuccess }, ref) => {
   const checkoutShippingFormId = "shipping-form";
   const checkoutShippingFormRef = useRef<HTMLFormElement>(null);
 
   const [errors, setErrors] = useState<IFormError[]>([]);
 
-  const history = useHistory();
   const {
     checkout,
     availableShippingMethods,
@@ -38,13 +33,11 @@ const CheckoutShippingSubpageWithRef: RefForwardingComponent<
 
   const shippingMethods = availableShippingMethods || [];
 
-  useImperativeHandle(ref, () => ({
-    submitShipping: () => {
-      checkoutShippingFormRef.current?.dispatchEvent(
-        new Event("submit", { cancelable: true })
-      );
-    },
-  }));
+  useImperativeHandle(ref, () => () => {
+    checkoutShippingFormRef.current?.dispatchEvent(
+      new Event("submit", { cancelable: true })
+    );
+  });
 
   const handleSetShippingMethod = async (shippingMethodId: string) => {
     changeSubmitProgress(true);
@@ -55,13 +48,12 @@ const CheckoutShippingSubpageWithRef: RefForwardingComponent<
       setErrors(errors);
     } else {
       setErrors([]);
-      history.push(CHECKOUT_STEPS[1].nextStepLink);
+      onSubmitSuccess(CheckoutStep.Shipping);
     }
   };
 
   return (
     <CheckoutShipping
-      {...props}
       shippingMethods={shippingMethods}
       selectedShippingMethodId={checkout?.shippingMethod?.id}
       errors={errors}
